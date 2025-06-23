@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Convertisseur Bières</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #faf6f0;
+    }
+    h1 {
+      color: #2E7D32;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      background: #e0e0e0;
+      display: inline-block;
+      margin-right: 9px;
+      border-radius: 5px 5px 0 0;
+      transition: all 0.4s;
+    }
+    .tab.active {
+      background: #4CAF50;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+      padding: 10px;
+      background: #fffdfa;
+      border-radius: 0 5px 5px 5px;
+      box-shadow: 0 6px 5px rgba(0, 0, 0, 0.1);
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .product-row {
+      display: flex;
+      margin-bottom: 10px;
+      align-items: center;
+      gap: 10px;
+    }
+    select, input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      flex: 1;
+    }
+    button {
+      padding: 10px 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: #3e8e41;
+    }
+    #resultsVolume, #resultsCrates {
+      margin-top: 20px;
+      padding: 15px;
+      background: #E8F5E9;
+      border-radius: 5px;
+    }
+    .remove-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .remove-btn:hover {
+      background: #d32f2f;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .total-row {
+      font-weight: bold;
+      background-color: #e1f5fe !important;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .product-row {
+        flex-direction: row;
+        align-items: stretch;
+      }
+      select, input {
+        flex: unset;
+        width: 100%;
+      }
+      .tab {
+        display: block;
+        width: 90%;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+      button {
+        width: 100%;
+        margin-top: 10px;
+      }
+      .remove-btn {
+        width: 10%;
+        margin-top: 5px;
+      }
+      .tab-content {
+        padding: 10px 10px;
+      }
+      table, th, td {
+        font-size: 14px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1><i class="fas fa-beer"></i> Calcul Volume</h1>
+
+  <div class="tab active" onclick="switchTab('toVolume')">
+    <i class="fas fa-box-open"></i> Caisses → Volume
+  </div>
+  <div class="tab" onclick="switchTab('toCrates')">
+    <i class="fas fa-wine-bottle"></i> Volume → Caisses
+  </div>
+
+  <!-- Caisses vers Volume -->
+  <div id="toVolume" class="tab-content active">
+    <div id="productContainer"></div>
+    <button onclick="addProductRow()">
+      <i class="fas fa-plus-circle"></i> Ajouter un produit
+    </button>
+    <button onclick="calculateVolume()">
+      <i class="fas fa-calculator"></i> Calculer
+    </button>
+    <div id="resultsVolume"></div>
+  </div>
+
+  <!-- Volume vers Caisses -->
+  <div id="toCrates" class="tab-content">
+    <div class="product-row">
+      <select id="productSelect">
+        <option value="24">Biere 24cl (24/caisse)</option>
+        <option value="25">Biere 25cl (24/caisse)</option>
+        <option value="33">Biere 33cl (24/caisse)</option>
+        <option value="50">Biere 50cl (24/caisse)</option>
+        <option value="2000">Fût 20L (1/caisse)</option>
+        <option value="3000">Fût 30L (1/caisse)</option>
+        <option value="5000">Fût 50L (1/caisse)</option>
+        <option value="75">Vin 75cl (6/caisse)</option>
+        <option value="100">Vin 1L (12/caisse)</option>
+      </select>
+    </div>
+    <div class="product-row">
+      <input type="number" id="volumeInput" placeholder="Volume en hL" step="0.01" min="0">
+    </div>
+    <button onclick="calculateCrates()">
+      <i class="fas fa-calculator"></i> Calculer
+    </button>
+    <div id="resultsCrates"></div>
+  </div>
+
+  <script>
+    function addProductRow() {
+      const container = document.getElementById('productContainer');
+      const row = document.createElement('div');
+      row.className = 'product-row';
+      row.innerHTML = `
+        <select class="productSelect">
+          <option value="24">Biere 24cl (24/caisse)</option>
+          <option value="25">Biere 25cl (24/caisse)</option>
+          <option value="33">Biere 33cl (24/caisse)</option>
+          <option value="50">Biere 50cl (24/caisse)</option>
+          <option value="2000">Fût 20L (1/caisse)</option>
+          <option value="3000">Fût 30L (1/caisse)</option>
+          <option value="5000">Fût 50L (1/caisse)</option>
+          <option value="75">Vin 75cl (6/caisse)</option>
+          <option value="100">Vin 1L (12/caisse)</option>
+        </select>
+        <input type="number" class="quantityInput" placeholder="Nb caisses" min="0">
+        <button class="remove-btn" onclick="this.parentNode.remove()">
+          <i class="fas fa-trash-alt"></i>
+        </button>`;
+      container.appendChild(row);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function calculateVolume() {
+      const rows = document.querySelectorAll('#toVolume .product-row');
+      if (rows.length === 0) {
+        alert("Veuillez ajouter au moins un produit");
+        return;
+      }
+
+      let html = '<h3><i class="fas fa-chart-bar"></i> Résultats</h3><table><tr><th>Produit</th><th>Caisses</th><th>Unités</th><th>Volume (hL)</th></tr>';
+      let total = { caisses: 0, bouteilles: 0, volume: 0 };
+
+      rows.forEach(row => {
+        const select = row.querySelector('.productSelect');
+        const input = row.querySelector('.quantityInput');
+
+        if (!input.value || input.value <= 0) {
+          input.style.border = "1px solid red";
+          return;
+        } else {
+          input.style.border = "1px solid #ddd";
+        }
+
+        const contenance = parseInt(select.value);
+        const caisses = parseInt(input.value);
+        let bouteillesParCaisse = 24;
+
+        if (contenance === 75) bouteillesParCaisse = 6;
+        else if (contenance === 100) bouteillesParCaisse = 12;
+        else if (contenance >= 2000) bouteillesParCaisse = 1;
+
+        const bouteilles = caisses * bouteillesParCaisse;
+        const volume = (bouteilles * contenance) / 10000;
+
+        total.caisses += caisses;
+        total.bouteilles += bouteilles;
+        total.volume += volume;
+
+        html += `<tr>
+            <td>${select.options[select.selectedIndex].text.split(' (')[0]}</td>
+            <td>${caisses}</td>
+            <td>${bouteilles}</td>
+            <td>${volume.toFixed(3)}</td>
+        </tr>`;
+      });
+
+      html += `<tr class="total-row">
+          <td><strong>TOTAL</strong></td>
+          <td><strong>${total.caisses}</strong></td>
+          <td><strong>${total.bouteilles}</strong></td>
+          <td><strong>${total.volume.toFixed(3)}</strong></td>
+        </tr></table>`;
+
+      document.getElementById('resultsVolume').innerHTML = html;
+    }
+
+    function calculateCrates() {
+      const contenance = parseInt(document.getElementById('productSelect').value);
+      const volume = parseFloat(document.getElementById('volumeInput').value);
+      if (!volume || volume <= 0) {
+        alert("Veuillez entrer un volume valide");
+        return;
+      }
+
+      let bouteillesParCaisse = 24;
+      if (contenance === 75) bouteillesParCaisse = 6;
+      else if (contenance === 100) bouteillesParCaisse = 12;
+      else if (contenance >= 2000) bouteillesParCaisse = 1;
+
+      const bouteilles = (volume * 10000) / contenance;
+      const caisses = bouteilles / bouteillesParCaisse;
+
+      const html = `
+        <h3><i class="fas fa-chart-pie"></i> Résultats</h3>
+        <p><strong>Produit:</strong> ${document.getElementById('productSelect').options[document.getElementById('productSelect').selectedIndex].text.split(' (')[0]}</p>
+        <p><strong>Volume saisi:</strong> ${volume} hL</p>
+        <p><strong>Unités nécessaires:</strong> ${Math.ceil(bouteilles)}</p>
+        <p><strong>Caisses nécessaires:</strong> ${Math.ceil(caisses)}</p>
+      `;
+
+      document.getElementById('resultsCrates').innerHTML = html;
+    }
+
+    window.onload = addProductRow;
+  </script>
+</body>
+</html>
