@@ -7,224 +7,473 @@
   <title>Convertisseur Bières</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
+    :root {
+      --primary-color: #3e8e41;
+      --primary-dark: #2E7D32;
+      --primary-light: #E8F5E9;
+      --accent-color: #FF9800;
+      --danger-color: #f44336;
+      --danger-dark: #d32f2f;
+      --text-color: #333;
+      --bg-color: #f8f5f0;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #faf6f0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
     }
-    h1 {
-      color: #2E7D32;
+    
+    header {
       text-align: center;
-      margin-bottom: 20px;
-      font-size: 28px;
+      margin-bottom: 25px;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      border-radius: 10px;
+      color: white;
+      box-shadow: var(--shadow);
     }
+    
+    h1 {
+      font-size: 28px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .tabs-container {
+      display: flex;
+      margin-bottom: -1px;
+      gap: 5px;
+    }
+    
     .tab {
-      padding: 10px 15px;
+      padding: 12px 20px;
       cursor: pointer;
       background: #e0e0e0;
-      display: inline-block;
-      margin-right: 9px;
-      border-radius: 5px 5px 0 0;
-      transition: all 0.4s;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    
     .tab.active {
-      background: #4CAF50;
-      color: white;
+      background: var(--card-bg);
+      color: var(--primary-dark);
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
     }
+    
     .tab-content {
       display: none;
-      padding: 10px;
-      background: #fffdfa;
-      border-radius: 0 5px 5px 5px;
-      box-shadow: 0 6px 5px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      background: var(--card-bg);
+      border-radius: 0 8px 8px 8px;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.4s ease;
     }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     .tab-content.active {
       display: block;
     }
+    
     .product-row {
       display: flex;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       align-items: center;
       gap: 10px;
     }
+    
     select, input {
-      padding: 8px;
+      padding: 12px;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 6px;
       flex: 1;
+      font-size: 16px;
+      transition: border-color 0.3s;
     }
-    button {
+    
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(62, 142, 65, 0.2);
+    }
+    
+    .unit-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .unit-btn {
       padding: 10px 15px;
-      background: #4CAF50;
+      background: #e9ecef;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .unit-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      background: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 500;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
     }
-    button:hover {
-      background: #3e8e41;
+    
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
-    #resultsVolume, #resultsCrates {
+    
+    .btn-secondary {
+      background: #6c757d;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .btn-danger {
+      background: var(--danger-color);
+    }
+    
+    .btn-danger:hover {
+      background: var(--danger-dark);
+    }
+    
+    .btn-export {
+      background: var(--accent-color);
+    }
+    
+    .btn-export:hover {
+      background: #f57c00;
+    }
+    
+    .buttons-container {
+      display: flex;
+      gap: 10px;
       margin-top: 20px;
-      padding: 15px;
-      background: #E8F5E9;
-      border-radius: 5px;
+      flex-wrap: wrap;
     }
+    
     .remove-btn {
-      background: #f44336;
+      background: var(--danger-color);
       color: white;
       border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
+      padding: 10px 14px;
+      border-radius: 6px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.3s;
     }
+    
     .remove-btn:hover {
-      background: #d32f2f;
+      background: var(--danger-dark);
+      transform: scale(1.05);
     }
+    
+    .results {
+      margin-top: 25px;
+      padding: 20px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      animation: slideIn 0.5s ease;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 15px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
+    
     th, td {
-      padding: 8px;
+      padding: 12px 15px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
+    
     th {
-      background-color: #4CAF50;
+      background-color: var(--primary-color);
       color: white;
+      font-weight: 500;
     }
+    
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: #f9f9f9;
     }
+    
     .total-row {
       font-weight: bold;
       background-color: #e1f5fe !important;
     }
-
+    
+    .alert {
+      padding: 12px 16px;
+      background: #ffecb3;
+      border-left: 4px solid #ffc107;
+      margin: 15px 0;
+      border-radius: 4px;
+    }
+    
     /* RESPONSIVE */
-    @media (max-width: 600px) {
-      .product-row {
-        flex-direction: row;
-        align-items: stretch;
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
       }
-      select, input {
-        flex: unset;
-        width: 100%;
-      }
-      .tab {
-        display: block;
-        width: 90%;
-        text-align: center;
-        margin-bottom: 5px;
-      }
-      button {
-        width: 100%;
-        margin-top: 10px;
-      }
-      .remove-btn {
-        width: 10%;
-        margin-top: 5px;
-      }
-      .tab-content {
-        padding: 10px 10px;
-      }
-      table, th, td {
-        font-size: 14px;
-      }
+      
       h1 {
         font-size: 22px;
       }
+      
+      .tabs-container {
+        flex-direction: column;
+      }
+      
+      .tab {
+        border-radius: 8px;
+        margin-bottom: 5px;
+      }
+      
+      .tab.active {
+        border-radius: 8px 8px 0 0;
+      }
+      
+      .tab-content {
+        border-radius: 0 0 8px 8px;
+      }
+      
+      .product-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      select, input {
+        width: 100%;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .unit-selector {
+        flex-direction: column;
+      }
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 15px;
+      color: #777;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <h1><i class="fas fa-beer"></i> Calcul Volume</h1>
+  <header>
+    <h1><i class="fas fa-beer"></i> Convertisseur Bières & Vins</h1>
+  </header>
 
-  <div class="tab active" onclick="switchTab('toVolume')">
-    <i class="fas fa-box-open"></i> Caisses → Volume
-  </div>
-  <div class="tab" onclick="switchTab('toCrates')">
-    <i class="fas fa-wine-bottle"></i> Volume → Caisses
+  <div class="tabs-container">
+    <div class="tab active" onclick="switchTab('toVolume')">
+      <i class="fas fa-box-open"></i> Caisses/Palettes → Volume
+    </div>
+    <div class="tab" onclick="switchTab('toCrates')">
+      <i class="fas fa-wine-bottle"></i> Volume → Caisses/Palettes
+    </div>
   </div>
 
-  <!-- Caisses vers Volume -->
+  <!-- Caisses/Palettes vers Volume -->
   <div id="toVolume" class="tab-content active">
+    <div class="alert">
+      <i class="fas fa-info-circle"></i> Ajoutez les produits et quantités pour calculer le volume total.
+    </div>
+    
+    <div class="unit-selector">
+      <div class="unit-btn active" id="unitCrates" onclick="changeUnit('crates')">
+        <i class="fas fa-box"></i> Saisie en Caisses
+      </div>
+      <div class="unit-btn" id="unitPallets" onclick="changeUnit('pallets')">
+        <i class="fas fa-pallet"></i> Saisie en Palettes
+      </div>
+    </div>
+    
     <div id="productContainer"></div>
-    <button onclick="addProductRow()">
-      <i class="fas fa-plus-circle"></i> Ajouter un produit
-    </button>
-    <button onclick="calculateVolume()">
-      <i class="fas fa-calculator"></i> Calculer
-    </button>
-    <div id="resultsVolume"></div>
+    
+    <div class="buttons-container">
+      <button class="btn" onclick="addProductRow()">
+        <i class="fas fa-plus-circle"></i> Ajouter un produit
+      </button>
+      <button class="btn" onclick="calculateVolume()">
+        <i class="fas fa-calculator"></i> Calculer le volume
+      </button>
+      <button class="btn btn-export" onclick="exportResults()" id="exportBtn" style="display: none;">
+        <i class="fas fa-file-export"></i> Exporter les résultats
+      </button>
+    </div>
+    
+    <div id="resultsVolume" class="results"></div>
   </div>
 
-  <!-- Volume vers Caisses -->
+  <!-- Volume vers Caisses/Palettes -->
   <div id="toCrates" class="tab-content">
+    <div class="alert">
+      <i class="fas fa-info-circle"></i> Sélectionnez un produit et entrez le volume pour calculer le nombre de caisses/palettes nécessaires.
+    </div>
     <div class="product-row">
       <select id="productSelect">
-        <option value="24">Biere 24cl (24/caisse)</option>
-        <option value="25">Biere 25cl (24/caisse)</option>
-        <option value="33">Biere 33cl (24/caisse)</option>
-        <option value="50">Biere 50cl (24/caisse)</option>
+        <option value="24">Biere 24cl (24/caisse, 64 caisses/palette)</option>
+        <option value="25">Biere 25cl (24/caisse, 91 caisses/palette)</option>
+        <option value="33">Biere 33cl (24/caisse, 110 caisses/palette)</option>
+        <option value="33vp">Biere 33cl VP (24/caisse, 65 caisses/palette)</option>
+        <option value="50">Biere 50cl (24/caisse, 70 caisses/palette)</option>
         <option value="2000">Fût 20L (1/caisse)</option>
         <option value="3000">Fût 30L (1/caisse)</option>
         <option value="5000">Fût 50L (1/caisse)</option>
-        <option value="75">Vin 75cl (6/caisse)</option>
-        <option value="100">Vin 1L (12/caisse)</option>
+        <option value="75">Vin 75cl (6/caisse, 120 caisses/palette)</option>
+        <option value="100">Vin 1L (12/caisse, 56 caisses/palette)</option>
       </select>
     </div>
     <div class="product-row">
       <input type="number" id="volumeInput" placeholder="Volume en hL" step="0.01" min="0">
     </div>
-    <button onclick="calculateCrates()">
-      <i class="fas fa-calculator"></i> Calculer
-    </button>
-    <div id="resultsCrates"></div>
+    
+    <div class="buttons-container">
+      <button class="btn" onclick="calculateCrates()">
+        <i class="fas fa-calculator"></i> Calculer les caisses/palettes
+      </button>
+    </div>
+    
+    <div id="resultsCrates" class="results"></div>
   </div>
 
+  <footer>
+    <p>Convertisseur Bières & Vins &copy; 2023 - Tous droits réservés</p>
+  </footer>
+
   <script>
+    // Données globales pour les résultats
+    let currentResults = null;
+    let currentUnit = 'crates'; // 'crates' ou 'pallets'
+    
+    // Configuration des palettes
+    const palettesConfig = {
+      '24': 64,    // Biere 24cl
+      '25': 91,    // Biere 25cl
+      '33': 110,   // Biere 33cl
+      '33vp': 65,  // Biere 33cl VP
+      '50': 70,    // Biere 50cl
+      '75': 120,   // Vin 75cl
+      '100': 56    // Vin 1L
+    };
+    
+    function changeUnit(unit) {
+      currentUnit = unit;
+      document.getElementById('unitCrates').classList.toggle('active', unit === 'crates');
+      document.getElementById('unitPallets').classList.toggle('active', unit === 'pallets');
+      
+      // Mettre à jour les placeholders
+      const inputs = document.querySelectorAll('.quantityInput');
+      inputs.forEach(input => {
+        input.placeholder = unit === 'crates' ? 'Nb caisses' : 'Nb palettes';
+      });
+    }
+    
     function addProductRow() {
       const container = document.getElementById('productContainer');
       const row = document.createElement('div');
       row.className = 'product-row';
       row.innerHTML = `
         <select class="productSelect">
-          <option value="24">Biere 24cl (24/caisse)</option>
-          <option value="25">Biere 25cl (24/caisse)</option>
-          <option value="33">Biere 33cl (24/caisse)</option>
-          <option value="50">Biere 50cl (24/caisse)</option>
+          <option value="24">Biere 24cl (24/caisse, 64 caisses/palette)</option>
+          <option value="25">Biere 25cl (24/caisse, 91 caisses/palette)</option>
+          <option value="33">Biere 33cl (24/caisse, 110 caisses/palette)</option>
+          <option value="33vp">Biere 33cl VP (24/caisse, 65 caisses/palette)</option>
+          <option value="50">Biere 50cl (24/caisse, 70 caisses/palette)</option>
           <option value="2000">Fût 20L (1/caisse)</option>
           <option value="3000">Fût 30L (1/caisse)</option>
           <option value="5000">Fût 50L (1/caisse)</option>
-          <option value="75">Vin 75cl (6/caisse)</option>
-          <option value="100">Vin 1L (12/caisse)</option>
+          <option value="75">Vin 75cl (6/caisse, 120 caisses/palette)</option>
+          <option value="100">Vin 1L (12/caisse, 56 caisses/palette)</option>
         </select>
-        <input type="number" class="quantityInput" placeholder="Nb caisses" min="0">
-        <button class="remove-btn" onclick="this.parentNode.remove()">
-          <i class="fas fa-trash-alt"></i>
-        </button>`;
+        <div style="display: flex; gap: 10px;">
+          <input type="number" class="quantityInput" placeholder="${currentUnit === 'crates' ? 'Nb caisses' : 'Nb palettes'}" min="0" style="flex: 1;">
+          <button class="remove-btn" onclick="this.parentNode.parentNode.remove()">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>`;
       container.appendChild(row);
     }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+      
+      const activeTab = document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`);
+      if (activeTab) activeTab.classList.add('active');
+      
       document.getElementById(tabId).classList.add('active');
+      
+      // Cacher le bouton d'export si on change d'onglet
+      if (tabId !== 'toVolume') {
+        document.getElementById('exportBtn').style.display = 'none';
+      } else if (currentResults) {
+        document.getElementById('exportBtn').style.display = 'flex';
+      }
     }
 
     function calculateVolume() {
@@ -234,8 +483,9 @@
         return;
       }
 
-      let html = '<h3><i class="fas fa-chart-bar"></i> Résultats</h3><table><tr><th>Produit</th><th>Caisses</th><th>Unités</th><th>Volume (hL)</th></tr>';
-      let total = { caisses: 0, bouteilles: 0, volume: 0 };
+      let html = '<h3><i class="fas fa-chart-bar"></i> Résultats détaillés</h3><table><tr><th>Produit</th><th>Palettes</th><th>Caisses</th><th>Unités</th><th>Volume (hL)</th></tr>';
+      let total = { palettes: 0, caisses: 0, bouteilles: 0, volume: 0 };
+      let details = [];
 
       rows.forEach(row => {
         const select = row.querySelector('.productSelect');
@@ -248,24 +498,54 @@
           input.style.border = "1px solid #ddd";
         }
 
-        const contenance = parseInt(select.value);
-        const caisses = parseInt(input.value);
-        let bouteillesParCaisse = 24;
+        const productType = select.value;
+        let quantity = parseFloat(input.value);
+        let palettes = 0;
+        let caisses = 0;
+        
+        // Conversion selon l'unité de saisie
+        if (currentUnit === 'pallets') {
+          palettes = quantity;
+          // Pour les produits avec palette définie
+          if (palettesConfig[productType]) {
+            caisses = palettes * palettesConfig[productType];
+          } else {
+            // Pour les fûts (1 caisse = 1 unité)
+            caisses = palettes;
+          }
+        } else {
+          caisses = quantity;
+          // Pour les produits avec palette définie
+          if (palettesConfig[productType]) {
+            palettes = caisses / palettesConfig[productType];
+          } else {
+            // Pour les fûts (1 caisse = 1 unité)
+            palettes = caisses;
+          }
+        }
 
-        if (contenance === 75) bouteillesParCaisse = 6;
-        else if (contenance === 100) bouteillesParCaisse = 12;
-        else if (contenance >= 2000) bouteillesParCaisse = 1;
-
+        const contenance = getContenance(productType);
+        let bouteillesParCaisse = getBottlesPerCrate(productType);
         const bouteilles = caisses * bouteillesParCaisse;
         const volume = (bouteilles * contenance) / 10000;
 
+        total.palettes += palettes;
         total.caisses += caisses;
         total.bouteilles += bouteilles;
         total.volume += volume;
 
+        details.push({
+          product: select.options[select.selectedIndex].text.split(' (')[0],
+          palettes: palettes,
+          caisses: caisses,
+          bouteilles: bouteilles,
+          volume: volume
+        });
+
         html += `<tr>
             <td>${select.options[select.selectedIndex].text.split(' (')[0]}</td>
-            <td>${caisses}</td>
+            <td>${palettes.toFixed(2)}</td>
+            <td>${caisses.toFixed(2)}</td>
             <td>${bouteilles}</td>
             <td>${volume.toFixed(3)}</td>
         </tr>`;
@@ -273,42 +553,125 @@
 
       html += `<tr class="total-row">
           <td><strong>TOTAL</strong></td>
-          <td><strong>${total.caisses}</strong></td>
+          <td><strong>${total.palettes.toFixed(2)}</strong></td>
+          <td><strong>${total.caisses.toFixed(2)}</strong></td>
           <td><strong>${total.bouteilles}</strong></td>
-          <td><strong>${total.volume.toFixed(3)}</strong></td>
+          <td><strong>${total.volume.toFixed(3)} hL</strong></td>
         </tr></table>`;
 
       document.getElementById('resultsVolume').innerHTML = html;
+      
+      // Stocker les résultats et afficher le bouton d'export
+      currentResults = {
+        details: details,
+        total: total,
+        type: 'volume'
+      };
+      document.getElementById('exportBtn').style.display = 'flex';
     }
 
     function calculateCrates() {
-      const contenance = parseInt(document.getElementById('productSelect').value);
+      const productType = document.getElementById('productSelect').value;
       const volume = parseFloat(document.getElementById('volumeInput').value);
+      
       if (!volume || volume <= 0) {
         alert("Veuillez entrer un volume valide");
+        document.getElementById('volumeInput').style.border = "1px solid red";
         return;
+      } else {
+        document.getElementById('volumeInput').style.border = "1px solid #ddd";
       }
 
-      let bouteillesParCaisse = 24;
-      if (contenance === 75) bouteillesParCaisse = 6;
-      else if (contenance === 100) bouteillesParCaisse = 12;
-      else if (contenance >= 2000) bouteillesParCaisse = 1;
-
+      const contenance = getContenance(productType);
+      let bouteillesParCaisse = getBottlesPerCrate(productType);
+      
       const bouteilles = (volume * 10000) / contenance;
       const caisses = bouteilles / bouteillesParCaisse;
+      
+      // Calcul des palettes si applicable
+      let palettes = 0;
+      if (palettesConfig[productType]) {
+        palettes = caisses / palettesConfig[productType];
+      } else {
+        // Pour les fûts (1 caisse = 1 unité)
+        palettes = caisses;
+      }
 
       const html = `
         <h3><i class="fas fa-chart-pie"></i> Résultats</h3>
-        <p><strong>Produit:</strong> ${document.getElementById('productSelect').options[document.getElementById('productSelect').selectedIndex].text.split(' (')[0]}</p>
-        <p><strong>Volume saisi:</strong> ${volume} hL</p>
-        <p><strong>Unités nécessaires:</strong> ${Math.ceil(bouteilles)}</p>
-        <p><strong>Caisses nécessaires:</strong> ${Math.ceil(caisses)}</p>
+        <table>
+          <tr>
+            <th>Produit</th>
+            <td>${document.getElementById('productSelect').options[document.getElementById('productSelect').selectedIndex].text.split(' (')[0]}</td>
+          </tr>
+          <tr>
+            <th>Volume saisi</th>
+            <td>${volume} hL</td>
+          </tr>
+          <tr>
+            <th>Unités nécessaires</th>
+            <td>${Math.ceil(bouteilles)}</td>
+          </tr>
+          <tr>
+            <th>Caisses nécessaires</th>
+            <td>${Math.ceil(caisses)}</td>
+          </tr>
+          <tr class="total-row">
+            <th>Palettes nécessaires</th>
+            <td><strong>${palettes.toFixed(2)}</strong></td>
+          </tr>
+        </table>
       `;
 
       document.getElementById('resultsCrates').innerHTML = html;
     }
+    
+    function getContenance(productType) {
+      if (productType === '33vp') return 33;
+      return parseInt(productType);
+    }
+    
+    function getBottlesPerCrate(productType) {
+      if (productType === '75') return 6;
+      if (productType === '100') return 12;
+      if (['2000', '3000', '5000'].includes(productType)) return 1;
+      return 24;
+    }
+    
+    function exportResults() {
+      if (!currentResults || currentResults.type !== 'volume') return;
+      
+      let csvContent = "Produit,Palettes,Caisses,Unités,Volume (hL)\n";
+      
+      currentResults.details.forEach(item => {
+        csvContent += `${item.product},${item.palettes.toFixed(2)},${item.caisses.toFixed(2)},${item.bouteilles},${item.volume.toFixed(3)}\n`;
+      });
+      
+      csvContent += `TOTAL,${currentResults.total.palettes.toFixed(2)},${currentResults.total.caisses.toFixed(2)},${currentResults.total.bouteilles},${currentResults.total.volume.toFixed(3)}\n`;
+      
+      const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "resultats_conversion.csv");
+      document.body.appendChild(link);
+      
+      link.click();
+      document.body.removeChild(link);
+    }
 
-    window.onload = addProductRow;
+    window.onload = function() {
+      addProductRow();
+      
+      // Rendre les onglets accessibles au clavier
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.setAttribute('tabindex', '0');
+        tab.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            this.click();
+          }
+        });
+      });
+    };
   </script>
 </body>
 </html>
